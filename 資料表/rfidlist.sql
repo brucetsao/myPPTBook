@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-05-08 04:59:59
+-- 產生時間： 2025-05-13 23:01:26
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.2.12
 
@@ -57,7 +57,7 @@ ALTER TABLE `rfidlist`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `rfidlist`
 --
 ALTER TABLE `rfidlist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主鍵', AUTO_INCREMENT=1;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主鍵';
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
