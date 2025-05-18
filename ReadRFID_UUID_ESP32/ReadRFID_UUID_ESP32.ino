@@ -44,9 +44,9 @@ void loop() {
   }
 
   // 顯示卡片的 UID
-  Serial.print("Card UID: ");
-  MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
-  Serial.println();
+//  Serial.print("Card UID: ");
+//  MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
+//  Serial.println();
 
   // 將 UID 轉換成字串格式儲存
   String uidString = "";
