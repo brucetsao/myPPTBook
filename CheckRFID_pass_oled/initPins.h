@@ -1,5 +1,5 @@
-//----------- 引入WiFi函式庫
-#include "commlib.h"     // 共用函式模組
+//-------wifi declare
+#include "Commlib.h"     // 共用函式模組
 #include "esp_mac.h"  // required - exposes esp_mac_type_t values
 #define WiFiPin 2   //控制板上WIFI指示燈腳位
 #define AccessPin 15 //控制板上連線指示燈腳位
@@ -25,7 +25,6 @@ WiFiMulti wifiMulti;    //產生多熱點連線物件
   long rssi ;   //網路連線之訊號強度'之儲存變數
   int status = WL_IDLE_STATUS;  //取得網路狀態之變數
   
-void initWiFi();   //網路連線，連上熱點
 void WiFion();//控制板上Wifi 指示燈打開
 void WiFioff();//控制板上Wifi 指示燈關閉
 void ACCESSon(); //控制板上連線指示燈打開
@@ -43,7 +42,8 @@ void ShowBTMAC(); // 在串列埠中印出藍芽MAC地址
 void initAll() ;   //初始化系統
 
 
-//---------- 通用函式
+
+
 void initAll()    //初始化系統
 {
   Serial.begin(9600);
@@ -61,58 +61,36 @@ void initAll()    //初始化系統
 void initWiFi()   //網路連線，連上熱點
 { 
   //加入連線熱點資料
+  wifiMulti.addAP("lab309", "");  //加入一組熱點
   wifiMulti.addAP("NCNUIOT", "0123456789");  //加入一組熱點
   wifiMulti.addAP("NUKIOT", "iot12345");  //加入一組熱點
-  /*
-  把單晶片(MCU)要連接的所有基地台，
-  將基地台名稱與基地台密碼，
-  一座基地台用wifiMulti.addAP(基地台名稱,基地台密碼);的函式指令，
-  一筆代表要登錄的基地台，
-  把所有可能要連的基地台都一筆一筆加入，
-  因為單晶片(MCU)不容易透過鍵盤等裝置，
-  在執行狀態加入基地台名稱與基地台密碼來連線WIFI熱點
-   */
+  wifiMulti.addAP("ASUS_B8", "");  //加入一組熱點
+ // wifiMulti.addAP("NUKIOT", "iot12345");  //加入一組熱點
+
+
+  // We start by connecting to a WiFi network
+
   Serial.println();
   Serial.println();
   Serial.print("Connecting to ");
   //通訊埠印出 "Connecting to "
-wifiMulti.run();  //多網路熱點設定連線
-/*
-  在本行之前，
-  用用wifiMulti.addAP(基地台名稱,基地台密碼);的函式指令加入之基地台，
-  系統會自動依加入次序，一台一台進行連線，
-  如果超過連線時間後，
-  往下一台基地台繼續連線，
-  直到所有加入的基地台都測試完畢，
-  都無一台可以連線進入網路為止，
-  
-  如果所有基地台都無法連線成功
-  WiFi.status() 會不等於 WL_CONNECTED
-  反之
-  WiFi.status() 會等於 WL_CONNECTED
- */
-while (WiFi.status() != WL_CONNECTED)     //還沒連線成功
-{
-  // wifiMulti.run() 啟動多熱點連線物件，進行已經紀錄的熱點進行連線，
-  // 一個一個連線，連到成功為主，或者是全部連不上
-  // WL_CONNECTED 連接熱點成功
-  Serial.print(".");   //通訊埠印出
-  delay(500) ;  //停500 ms
-   wifiMulti.run();   //多網路熱點設定連線
-   /*
-      有可能所有基地台正在擁擠，
-      所以停delay(500) ;  //停500 ms，
-      透過” wifiMulti.run();   //多網路熱點設定連線”，
-      再重新所有基地台在連線一次
-    */
-}
+  wifiMulti.run();  //多網路熱點設定連線
+ while (WiFi.status() != WL_CONNECTED)     //還沒連線成功
+  {
+    // wifiMulti.run() 啟動多熱點連線物件，進行已經紀錄的熱點進行連線，
+    // 一個一個連線，連到成功為主，或者是全部連不上
+    // WL_CONNECTED 連接熱點成功
+    Serial.print(".");   //通訊埠印出
+    delay(500) ;  //停500 ms
+     wifiMulti.run();   //多網路熱點設定連線
+  }
     Serial.println("WiFi connected");   //通訊埠印出 WiFi connected
     Serial.print("AP Name: ");   //通訊埠印出 AP Name:
-    APname = WiFi.SSID();   //取得連到網路之熱點SSID基地台名稱
+    APname = WiFi.SSID();
     Serial.println(APname);   //通訊埠印出 WiFi.SSID()==>從熱點名稱
     Serial.print("IP address: ");   //通訊埠印出 IP address:
-    ip = WiFi.localIP();    //取出連到網路之熱點SSID基地台，DHCP配發的IP address
-    IPData = IpAddress2String(ip) ;// 將取得的IP address
+    ip = WiFi.localIP();    //取出IP address
+    IPData = IpAddress2String(ip) ;
     Serial.println(IPData);   //通訊埠印出 WiFi.localIP()==>從熱點取得IP位址
     //通訊埠印出連接熱點取得的IP位址
     WiFion(); //控制板上Wifi 指示燈打開
@@ -136,7 +114,9 @@ void ShowInternet()   //秀出網路連線資訊
   Serial.print("\n") ;    
 
 }
-
+//--------------------
+//--------------------
+//---------- 通用函式
 
 // 取得實體WiFi卡的MAC地址（新版ESP32方式）
 String getDefaultMacAddress() 
@@ -259,20 +239,30 @@ String GetMacAddress()
   Tmp.toUpperCase();  // 轉換為大寫
   return Tmp; //回傳內容
 }
-void ShowMAC() {  // 在串列埠中印出MAC地址
-  Serial.print("MAC Address:(");  // 印出標題
-  Serial.print(MacData);  // 印出MAC地址
+void ShowBTMAC() 
+{  // 在串列埠中印出藍芽MAC地址
+  Serial.print("BlueTooth MAC Address:(");  // 印出標題
+  Serial.print(BTMacData);  // 印出MAC地址
   Serial.print(")\n");  // 換行
 }
-
-String IpAddress2String(const IPAddress& ipAddress)// 將IP地址轉為字串 
-{  
-  return String(ipAddress[0]) + "." + 
-         String(ipAddress[1]) + "." + 
-         String(ipAddress[2]) + "." + 
-         String(ipAddress[3]);  // 轉換為點分十進制
+// 在串列埠顯示MAC地址
+void ShowMAC() 
+{
+Serial.print("MAC Address:(");  // 印出標籤
+Serial.print(MacData);   // 印出MAC地址
+Serial.print(")\n");  // 換行
 }
-//-------------GPIO Control----------
+
+
+// IP地址轉換函式，將4個字節的IP轉為字串
+String IpAddress2String(const IPAddress& ipAddress) 
+{
+  return String(ipAddress[0]) + "." +
+         String(ipAddress[1]) + "." +
+         String(ipAddress[2]) + "." +
+         String(ipAddress[3]);  //回傳內容
+}
+
 void initGPIO() //設定使用之所有GPIO腳位
 {
   pinMode(WiFiPin,OUTPUT) ; //設定WIFI 指示燈為輸出高低電位
