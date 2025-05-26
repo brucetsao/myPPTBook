@@ -2,7 +2,8 @@
 #include "OledLib.h"
 #include "RFIDLib.h"
 
-void setup() {
+void setup() 
+{
   Serial.begin(9600);     // 啟動序列埠，設置傳輸速率為 9600 bps
   while (!Serial);        // 如果序列埠尚未開啟（如 ATMEGA32U4 架構），則持續等待
   initOLED() ;  //啟動OLED顯示器，並檢查是否成功啟動。
@@ -29,7 +30,7 @@ void loop()
   tmp = readRFIDUUID() ; //建立讀取RFID UUID卡號函式
   
   uidStr=readRFIDUUIDString() ;//建立讀取RFID UUID卡號函式(Byte內容字串回傳)
-
+ 
   // 輸出 UID 字串（十六進位格式）
   Serial.println(uidStr);
 

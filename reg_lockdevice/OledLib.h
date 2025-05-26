@@ -37,12 +37,10 @@ void _TPrint(int x, int y,  const char *ss);   // 在指定位置輸出文字。
 void _TextPrint(int x, int y,  const char *ss, const uint8_t *font_8x8);   // 在指定位置使用指定字形輸出文字。
 void _UTF8Print(int x, int y,  const char *ss, const uint8_t *font_8x8);   // 在指定位置使用指定字形輸出UTF-8編碼的文字。
 void _Print(const char *ss);   // 不指定位置直接輸出文字（從當前游標位置開始）。
-void PrintMAConOLED(String ss);   //顯示MAC Address在Oled上
 //--------------
 // all font document ref URL:https://github.com/olikraus/u8g2/wiki/u8g2reference
 U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0); 
 //宣告一個U8g2物件u8g2，用於控制128x32像素的SSD1306 OLED顯示器，採用硬體I2C通訊，螢幕方向為0度（不旋轉）
-
 char oledstr[20] ;    //儲存MAC Address 
 
 void _update()   //更新螢幕，將目前的顯示內容刷新到OLED螢幕上。

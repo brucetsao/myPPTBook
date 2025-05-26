@@ -68,6 +68,44 @@ String SPACE(int sp)  //sp為傳入產生空白字串長度
   }
   return tmp; //回傳產生空白字串
 }
+//
+// 將一個 unsigned long（無號長整數）轉換成字串（String）
+String ULongtoString(unsigned long ll)
+{
+  /*
+    這個函式的功能是：將一個 unsigned long（無號長整數）轉成 String 物件，
+    這樣就能方便用來顯示在序列埠或儲存成字串資料。
+    
+    重要概念解釋：
+    unsigned long ll:
+    這是函式的參數，代表一個 32 位元的無號整數（範圍從 0 到 4,294,967,295）。
+    通常這個型別會用來儲存時間（如 millis() 回傳值）或是像 RFID 的 UID。
+    
+    char ww[20]:
+    C 語言的傳統字串是用「字元陣列」表示。
+    這裡我們開一個 20 個字元空間的陣列，來存放轉換出來的數字字串。
+    雖然 unsigned long 最多只有 10 位數（如 4294967295），但為保險（也可能加上結尾字元 \0），通常會給多一點空間。
+    
+    sprintf(ww, "%lu", ll)：
+    sprintf 是一個類似 printf 的函式，它的功能是將數值格式化為字串並寫入陣列。
+    %lu 是格式符號，意思是將 unsigned long 轉成十進位表示。
+    最後結果會存到 ww 陣列中。
+    
+    return String(ww)：
+    Arduino 提供的 String 類別可以從 C-style 字串建構出字串物件，方便日後操作。
+    這裡將剛剛格式化的數字字串轉換成 String 並回傳。
+*/
+  // 宣告一個字元陣列（char array）ww，大小為 20，
+  // 用來暫存格式化後的字串（這個大小足夠裝下轉換後的長數字）
+  char ww[20];
+
+  // 使用 sprintf 函式將 unsigned long ll 的數值格式化為十進位字串，
+  // %lu 代表「以 unsigned long 格式印出為十進位」
+  sprintf(ww, "%lu", ll);
+
+  // 將格式化後的 C-style 字串（ww）轉換為 Arduino 的 String 物件並回傳
+  return String(ww);
+}
 
 // 生成指定長度的字元C字串
 String genstr(char c,int sp)  //sp為傳入產生空白字串長度
@@ -79,6 +117,8 @@ String genstr(char c,int sp)  //sp為傳入產生空白字串長度
   }
   return tmp; //回傳產生空白字串
 }
+
+
 
 // 轉換數字為指定長度與進位制的字串，並補零
 String strzero(long num, int len, int base)

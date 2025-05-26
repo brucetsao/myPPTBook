@@ -1,0 +1,21 @@
+I need to write a Arduino C , 
+which MCU modules is ESP32S， 
+from RFID reader(MFRC522 Sensor) 
+to read RFID Card-number:"0243348066"  
+to get cardnumber. 
+and use this RFID Card-number:"0243348066" 
+to access via http GET,which access string is 
+"http://iot.arduino.org.tw:8888/bigdata/rfid/rfidpass.php?KEY=0243348066" 
+to access website ,which response 
+json document:"{"Device":"0243348066","Result":"Find"}" , 
+please design a function1 to  reader RFID Card number , 
+and function2 to combine the string
+"http://iot.arduino.org.tw:8888/bigdata/rfid/rfidpass.php?KEY=0243348066" 
+with RFID Card number:"0243348066" to access web , 
+and design function3 to get the string
+"http://iot.arduino.org.tw:8888/bigdata/rfid/rfidpass.php?KEY=0243348066" 
+and result is "{"Device":"0243348066","Result":"Find"}" , 
+and design function4 to read the responsed json string , 
+and compare "Device" value and RFID Card-number:"0243348066" to be equal,
+  get response string" which ,"Result" value equal "Find" 
+  to turn on relay module bind GPIO D7

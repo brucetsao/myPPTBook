@@ -20,8 +20,8 @@ MFRC522DriverSPI driver{ss_pin};  // 建立一個 SPI 通訊驅動物件
 MFRC522 mfrc522{driver};           // 建立一個 MFRC522 物件並指定通訊方式
 
 // 預先宣告 UUIDString 函式：將 4 個 byte 資料組合成一個 long 型態的數值
-long UUIDString(int d4,int d3, int d2, int d1);
-
+unsigned long UUIDString(int d4,int d3, int d2, int d1); //// 輸出RFID Tag 常見的10位數字以內的卡值(將 4 個 byte 數據轉換成一個 long 整數（32位元）)
+ String uidStr = "" ;// RFID卡號的String變數
 
 void initRFID() //初始化RFID感測器函式
 {
@@ -31,11 +31,11 @@ void initRFID() //初始化RFID感測器函式
 }
 
 // 輸出RFID Tag 常見的10位數字以內的卡值(將 4 個 byte 數據轉換成一個 long 整數（32位元）)
-long UUIDString(int d4,int d3, int d2, int d1) 
+unsigned long UUIDString(int d4,int d3, int d2, int d1) //// 輸出RFID Tag 常見的10位數字以內的卡值(將 4 個 byte 數據轉換成一個 long 整數（32位元）)
 {
   //讀取 RFID 卡片的 UID，然後把 UID 傳入十六進位轉成之整數與十進位數值方式輸出
-  long tmp = 0;
-  tmp = d4 * (long)16777216 + d3 * (long)65536 + d2 * (long)256 + d1; 
+  unsigned long tmp = 0;
+  tmp = d4 * (unsigned long)16777216 + d3 * (unsigned long)65536 + d2 * (unsigned long)256 + (unsigned long)d1; 
   // 依據每個 byte 的位元組位置，加權組合成一個長整數
   return tmp;
 }
@@ -74,7 +74,8 @@ boolean checkReadRFIDSuccess()  //嘗試讀取卡片序列號（UID）是否成�
 
 String readRFIDUUID() //建立讀取RFID UUID卡號函式
 {
-  String tmp = "" ;  //宣告回傳變數
+  unsigned long tmp = 0 ;  //宣告回傳變數
+ 
   // 顯示卡片的 UID
   //Serial.print("Card UID: ");
   //MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
@@ -87,16 +88,24 @@ String readRFIDUUID() //建立讀取RFID UUID卡號函式
           (int)mfrc522.uid.uidByte[1],
           (int)mfrc522.uid.uidByte[0]
         );
-      int len = tmp.length() ;
+        
+//        Serial.print("tmp is :(");
+//        Serial.print(tmp);
+//        Serial.print(")\n");
+       String tt= ULongtoString(tmp) ;
+      int len = tt.length() ;
+//        Serial.print("Len is :(");
+//        Serial.print(len);
+//        Serial.print(")\n");
     if (len <10)
     {
-        return genstr('0',10-len)+tmp ;
+        return genstr('0',10-len)+tt ;
     }
     else
     {
-       return tmp; //回傳卡號到readRFIDUUIDString()函式
+       return tt; //回傳卡號到readRFIDUUIDString()函式
     }
-  return tmp ;//回傳卡號到readRFIDUUID()函式
+  return tt ;//回傳卡號到readRFIDUUID()函式
 }
 
 String readRFIDUUIDString() //建立讀取RFID UUID卡號函式(Byte內容字串回傳)

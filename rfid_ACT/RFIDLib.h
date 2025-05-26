@@ -22,9 +22,8 @@ MFRC522 mfrc522{driver};           // 建立一個 MFRC522 物件並指定通訊
 // 預先宣告 UUIDString 函式：將 4 個 byte 資料組合成一個 long 型態的數值
 unsigned long UUIDString(int d4,int d3, int d2, int d1);
  String uidStr = "" ;// RFID卡號的String變數
- 
-void PrintCardonOLED(String ss); //顯示卡號在Oled上
 
+void PrintCardonOLED(String ss); //顯示卡號在Oled上
  
 void initRFID() //初始化RFID感測器函式
 {
@@ -91,14 +90,14 @@ String readRFIDUUID() //建立讀取RFID UUID卡號函式
           (int)mfrc522.uid.uidByte[1],
           (int)mfrc522.uid.uidByte[0]
         );
-        Serial.print("tmp is :(");
-        Serial.print(tmp);
-        Serial.print(")\n");
-        
+//        Serial.print("tmp is :(");
+//        Serial.print(tmp);
+//        Serial.print(")\n");
+//        
       int len = tmp.length() ;
-        Serial.print("Len is :(");
-        Serial.print(len);
-        Serial.print(")\n");
+//        Serial.print("Len is :(");
+//        Serial.print(len);
+//        Serial.print(")\n");
     if (len <10)
     {
         return genstr('0',10-len)+tmp ;
@@ -124,9 +123,8 @@ String readRFIDUUIDString() //建立讀取RFID UUID卡號函式(Byte內容字串
 }
 
 
-
 void PrintCardonOLED(String ss) //顯示卡號在Oled上
 {
     sprintf(cardvalue,"%s",ss)  ;  //轉換string字串到char array
-      _TPrint(1,32,cardvalue);  //(50, 15) 顯示卡號。
+      _TPrint(1,35,cardvalue);  //(50, 15) 顯示卡號。
 }

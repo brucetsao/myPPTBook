@@ -1,0 +1,155 @@
+#include <SPI.h>
+#include <MFRC522.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
+// Pin definitions for MFRC522 on ESP32
+#define RST_PIN 27 // Reset pin for MFRC522
+#define SS_PIN 5   // Slave Select pin for MFRC522
+// Relay pin
+#define RELAY_PIN 13 // Relay connected to GPIO D7 (GPIO 13 on ESP32)
+
+// WiFi credentials
+const char* ssid = "YOUR_WIFI_SSID"; // Replace with your WiFi SSID
+const char* password = "YOUR_WIFI_PASSWORD"; // Replace with your WiFi password
+
+// Base URL for HTTP request
+const char* baseUrl = "http://iot.arduino.org.tw:8888/bigdata/rfid/checkpass.php?MAC=";
+
+// Initialize MFRC522
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+// Function 1: Read RFID card number and ESP32 MAC address
+bool readRFIDCardAndMAC(String &cardNumber, String &macAddress) {
+  // Read RFID card
+  if (!mfrc522.PICC_IsNewCardPresent()) {
+    return false;
+  }
+  if (!mfrc522.PICC_ReadCardSerial()) {
+    return false;
+  }
+  // Read card UID
+  cardNumber = "";
+  for (byte i = 0; i < mfrc522.uid.size; i++) {
+    if (mfrc522.uid.uidByte[i] < 0x10) {
+      cardNumber += "0";
+    }
+    cardNumber += String(mfrc522.uid.uidByte[i], HEX);
+  }
+  cardNumber.toUpperCase();
+  // Halt PICC
+  mfrc522.PICC_HaltA();
+  // Stop encryption on PCD
+  mfrc522.PCD_StopAuthState();
+
+  // Get MAC address
+  macAddress = WiFi.macAddress();
+  macAddress.replace(":", ""); // Remove colons to match format "112233445566"
+  macAddress.toUpperCase();
+
+  return true;
+}
+
+// Function 2: Construct HTTP GET URL with MAC address and RFID card number
+String constructUrl(String macAddress, String cardNumber) {
+  if (macAddress == "" || cardNumber == "") {
+    return "";
+  }
+  return String(baseUrl) + macAddress + "&KEY=" + cardNumber;
+}
+
+// Function 3: Send HTTP GET request and get response
+String sendHttpGetRequest(String url) {
+  if (url == "") {
+    return "";
+  }
+  HTTPClient http;
+  http.begin(url);
+  int httpCode = http.GET();
+  String payload = "";
+  if (httpCode == HTTP_CODE_OK) {
+    payload = http.getString();
+  }
+  http.end();
+  return payload;
+}
+
+// Function 4: Parse JSON response and control relay
+bool processJsonResponse(String jsonResponse, String macAddress, String cardNumber) {
+  if (jsonResponse == "") {
+    return false;
+  }
+  // Allocate the JSON document
+  StaticJsonDocument<200> doc;
+  // Parse JSON
+  DeserializationError error = deserializeJson(doc, jsonResponse);
+  if (error) {
+    Serial.print("JSON parsing failed: ");
+    Serial.println(error.c_str());
+    return false;
+  }
+  // Extract Device, Card, and Result
+  const char* device = doc["Device"];
+  const char* card = doc["Card"];
+  const char* result = doc["Result"];
+  // Compare Device with MAC, Card with cardNumber, and check if Result is "Find"
+  if (String(device) == macAddress && String(card) == cardNumber && String(result) == "Find") {
+    digitalWrite(RELAY_PIN, HIGH); // Turn on relay
+    return true;
+  } else {
+    digitalWrite(RELAY_PIN, LOW); // Ensure relay is off
+    return false;
+  }
+}
+
+void setup() {
+  // Initialize Serial
+  Serial.begin(115200);
+  // Initialize SPI bus
+  SPI.begin();
+  // Initialize MFRC522
+  mfrc522.PCD_Init();
+  // Initialize relay pin
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW); // Ensure relay is off initially
+  // Connect to WiFi
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWiFi connected");
+}
+
+void loop() {
+  // Function 1: Read RFID card and MAC address
+  String cardNumber, macAddress;
+  if (readRFIDCardAndMAC(cardNumber, macAddress)) {
+    Serial.println("Card Number: " + cardNumber);
+    Serial.println("MAC Address: " + macAddress);
+    // Function 2: Construct URL
+    String url = constructUrl(macAddress, cardNumber);
+    if (url != "") {
+      Serial.println("URL: " + url);
+      // Function 3: Send HTTP request
+      String response = sendHttpGetRequest(url);
+      if (response != "") {
+        Serial.println("Response: " + response);
+        // Function 4: Process JSON and control relay
+        bool success = processJsonResponse(response, macAddress, cardNumber);
+        if (success) {
+          Serial.println("Access granted: Relay ON");
+        } else {
+          Serial.println("Access denied: Relay OFF");
+        }
+      } else {
+        Serial.println("HTTP request failed");
+      }
+    } else {
+      Serial.println("Invalid URL");
+    }
+  }
+  delay(1000); // Wait before next scan
+}

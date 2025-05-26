@@ -72,6 +72,12 @@ void initOLED()   //啟動OLED顯示器，並檢查是否成功啟動。
       while (1);  //永遠死在這
     }
      Serial.println("init OLED successful!");//如果成功，列印「init OLED successful!」。
+    _setFont(u8g2_font_logisoso16_tf);  //設定字形 
+    _TPrint(1,16,"Hello");  //(50, 15) 顯示Hello。 
+    _updateBuffer();    //更新oled畫面
+    delay(2000) ; 
+    _clearBuffer();   //清除之前畫圖等記憶體
+    _updateBuffer();    //更新oled畫面
    // _initDisplay() ;
 }
 void _setCursor(int x, int y) //設定目前文字游標的位置，指定後續文字顯示的起點。
