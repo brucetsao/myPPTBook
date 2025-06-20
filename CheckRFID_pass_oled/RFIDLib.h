@@ -79,18 +79,20 @@ boolean checkReadRFIDSuccess()  //嘗試讀取卡片序列號（UID）是否成�
 String readRFIDUUID() //建立讀取RFID UUID卡號函式
 {
   String tmp = "" ;  //宣告回傳變數
+  unsigned long ttmp ;
   // 顯示卡片的 UID
   //Serial.print("Card UID: ");
   //MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
   //Serial.println();
 
   // 使用自訂函式 UUIDString()，輸出RFID Tag 常見的10位數字以內的卡值
-  tmp = UUIDString(
+  ttmp = UUIDString(
           (int)mfrc522.uid.uidByte[3],
           (int)mfrc522.uid.uidByte[2],
           (int)mfrc522.uid.uidByte[1],
           (int)mfrc522.uid.uidByte[0]
         );
+        tmp = string(ttmp) ;
         Serial.print("tmp is :(");
         Serial.print(tmp);
         Serial.print(")\n");

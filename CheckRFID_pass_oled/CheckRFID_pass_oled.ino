@@ -42,7 +42,7 @@ void loop()
 
   // 輸出 十個數字長度的UID 整數（十進位格式）
   Serial.println(uidStr);
-  
+  PrintMAConOLED(MacData); //印出網路卡MAC地址在OLED上
   PrintCardonOLED(uidStr) ;  //顯示卡號在Oled上
   _updateBuffer();    //更新oled畫面
   SendtoClouding() ;    //傳送感測資料到雲端

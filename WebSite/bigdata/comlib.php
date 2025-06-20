@@ -278,14 +278,5 @@ function rfidstatus($parameterno) //RFID 狀態說明
     return isset($statusMap[$parameterno]) ? $statusMap[$parameterno] : '有問題';
 }
 
-function rfidpassstatus($parameterno) //RFID 狀態說明
-{
-    $statusMap = [
-        0 => '未啟用禁入',
-        1 => '允許進入'
-            ];
-    return isset($statusMap[$parameterno]) ? $statusMap[$parameterno] : '有問題';
-}
-
 // JavaScript 函數用於瀏覽器返回或前進
 ?>
