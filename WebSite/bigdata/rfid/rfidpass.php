@@ -11,12 +11,11 @@
 	"Result" :"Find"/"notFind"
 }
 */
-    class maindata
-    {
-            public $Device ;        //RFID裝置卡號
-            public $Result ;      //是否准許進入，"Find" is pass, "notFind" is not valid
-     }
-
+class maindata
+{
+	public $Device ;        //RFID裝置卡號
+	public $Result ;      //是否准許進入，"Find" is pass, "notFind" is not valid
+ }
  $maindata = new maindata() ;   //產生class maindata 的實體
  
  if(!isset($_GET["KEY"]))//是否存在"KEY"的参数
@@ -77,9 +76,7 @@
 
 	echo json_encode($maindata, JSON_UNESCAPED_UNICODE);	
  
-        if ($result && $result instanceof mysqli_result) {
-            mysqli_free_result($result);	// 關閉資料集
-            }
+	 mysqli_free_result($result);	// 關閉資料集
 
 	 mysqli_close($link);		// 關閉連線
 ?>

@@ -1,18 +1,19 @@
 //http://iot.arduino.org.tw:8888/bigdata/rfid/checkpass.php?MAC=112233445566&KEY=0079262864
 
-#include <ArduinoJson.h>  // 引入 ArduinoJson 函式庫，用來處理 JSON 格式資料
-#include <HTTPClient.h> 
+#include <HTTPClient.h>       // 引入 HTTP 用的函式庫
+#include "JSONLib.h"          // 自訂或外部的 JSON 函式庫（可能內含 ArduinoJson）
 
-char iotserver[] = "iot.arduino.org.tw";    // 建國老師 的雲端服務器
-int iotport = 8888 ;  //定義雲端伺服器的通訊埠號，這裡設為 8888，用於後續的網路連線。
-// Server URL: iot.arduino.org.tw 
-// Server Port: 8888
-String httphead = "http://iot.arduino.org.tw:8888/bigdata/rfid/checkpass.php" ;
-String strGet="GET /bigdata/rfid/checkpass.php";
-//  DB Agent 的 HTTP GET 請求的開頭，指向雲端伺服器上的特定程式
-String strHttp=" HTTP/1.1";   // HTTP 協議的版本標頭，這裡是 HTTP/1.1，表示使用 HTTP 1.1 版本進行通訊。 
-String strHost="Host: iot.arduino.org.tw";  // 指定目標主機的域名，這裡是 iot.arduino.org.tw，這是 HTTP 請求頭的一部分。
- String connectstr ;    //一個空的字串變數，後續用來動態組成完整的 RESTful 請求參數。
+// 雲端伺服器資訊設定
+char iotserver[] = "iot.arduino.org.tw";   // 建國老師的伺服器網址
+int iotport = 8888;                        // 使用的 TCP 通訊埠
+
+// 定義完整的 HTTP GET 相關參數
+String httphead = "http://iot.arduino.org.tw:8888/bigdata/rfid/checkpass.php";
+String strGet = "GET /bigdata/rfid/checkpass.php"; // 請求行的開頭（未直接使用）
+String strHttp = " HTTP/1.1";                       // HTTP 協定版本
+String strHost = "Host: iot.arduino.org.tw";        // Host 標頭
+String connectstr; // 最後完整的請求 URL 字串將組在這裡
+
 
 /*
  http://iot.arduino.org.tw:8888/bigdata/rfid/checkpass.php?MAC=112233445566&KEY=0079262864
@@ -23,95 +24,90 @@ String strHost="Host: iot.arduino.org.tw";  // 指定目標主機的域名，這
   參數：?KEY=0079262864，表示傳送的資料 RFID Card UUID
 
  */
+// 傳入 MAC 位址與卡號，組成完整參數 "?MAC=xxx&KEY=yyy"
 String getRFIDString(String mm, String cc)
 {
-  //http://iot.arduino.org.tw:8888/bigdata/rfid/checkpass.php?MAC=112233445566&KEY=0079262864
-  return "?MAC="+mm+"&KEY="+cc;
+  return "?MAC=" + mm + "&KEY=" + cc;
 }
- String sendHttpGetRequest(String url) {
-  if (url == "") {
-    return "";
-  }
+
+String sendHttpGetRequest(String url) {
+  if (url == "") return "";  // 如果 URL 為空，直接回傳空字串
+
   HTTPClient http;
-  http.begin(url);
-  int httpCode = http.GET();
+  http.begin(url);           // 設定連線的網址
+  int httpCode = http.GET(); // 發送 GET 請求
   String payload = "";
+
   if (httpCode == HTTP_CODE_OK) {
-    payload = http.getString();
+    payload = http.getString(); // 如果成功回應，讀取內容
   }
-  http.end();
+
+  http.end(); // 關閉 HTTP 連線
   return payload;
 }
 
+
 bool processJsonResponse(String jsonResponse, String macAddress, String cardNumber) {
-  if (jsonResponse == "") {
-    return false;
-  }
-  // Allocate the JSON document
-  StaticJsonDocument<200> doc;
-  // Parse JSON
-  DeserializationError error = deserializeJson(doc, jsonResponse);
+  if (jsonResponse == "") return false; // 空資料，表示失敗
+
+
+  DeserializationError error = deserializeJson(doc, jsonResponse); // 解析 JSON
+
   if (error) {
     Serial.print("JSON parsing failed: ");
     Serial.println(error.c_str());
     return false;
   }
-  // Extract Device, Card, and Result
+
+  // 從 JSON 中提取欄位
   const char* device = doc["Device"];
   const char* card = doc["Card"];
   const char* result = doc["Result"];
-  // Compare Device with MAC, Card with cardNumber, and check if Result is "Find"
-  if (String(device) == macAddress && String(card) == cardNumber && String(result) == "Find") 
-  {
-    Relayon() ; //控制板上Relay Modules打開
+
+  // 判斷是否匹配並允許通過
+  if (String(device) == macAddress && String(card) == cardNumber && String(result) == "Find") {
+    Relayon();  // 若符合條件，啟動繼電器
     return true;
-  } 
-  else 
-  {
-    Relayoff() ;//控制板上Relay Modules關閉 
+  } else {
+    Relayoff(); // 否則關閉繼電器
     return false;
   }
 }
 
-void SendtoClouding()     //傳送感測資料到雲端
-{
-  // 自訂函數，用來將感測器的資料（例如溫度和濕度）透過 HTTP GET 請求傳送到雲端伺服器。
-          connectstr = httphead+getRFIDString(MacData,uidStr) ;    //組出 http get 淂程式與參數
-          /*
-          組成GET Format 的Resetful  的 Parameters 字串
-          connectstr：動態組成 RESTful 請求的參數部分：
-          MacData：設備的 MAC 位址（假設已在程式其他地方定義）。
-          Tvalue：溫度值，轉換成字串格式。
-          Hvalue：濕度值，轉換成字串格式。
-          */
-          
- Serial.println(connectstr) ;//將組合好的參數字串輸出到序列監控視窗，用於除錯
- String response = sendHttpGetRequest(connectstr);
-   if (response != "") 
-   {
-      Serial.println("Response: " + response);
-      // Function 4: Process JSON and control relay
-      bool success = processJsonResponse(response, MacData, uidStr);
-      if (success) 
-      { 
-        //Relayon() ; //控制板上Relay Modules打開
-        Serial.println("Access granted: Relay ON");
-      } 
-      else 
-      {
-        //Relayoff() ;//控制板上Relay Modules關閉  
-        Serial.println("Access denied: Relay OFF");
-        }
+void SendtoClouding() {
+  // 組合 HTTP GET 請求字串：加上參數
+  connectstr = httphead + getRFIDString(MacData, uidStr);
+  Serial.println(connectstr); // 印出完整的 URL，用於除錯
+
+  // 發送 HTTP 請求，並取得回應
+  String response = sendHttpGetRequest(connectstr);
+
+  if (response != "") 
+  {
+    Serial.println("Response: " + response);
+    // 解析回應與控制繼電器
+    bool success = processJsonResponse(response, MacData, uidStr);
+
+    if (success) 
+    {
+      Serial.println("Access granted: Relay ON");
+      Relayon(); //控制板上Relay Modules打開
+    } 
+    else 
+    {
+      Serial.println("Access denied: Relay OFF");
+      Relayoff(); //控制板上Relay Modules關閉
+    }
   } 
   else 
   {
-      Serial.println("HTTP request failed");
+    Serial.println("HTTP request failed");
   }
-      
-  if (client.connected()) //檢查是否仍與伺服器保持連線
-  { 
-    client.stop();  //如果連線存在，則主動斷開與伺服器的連接，釋放資源。
+
+  // 若有 TCP 客戶端連線，主動斷開
+  if (client.connected()) {
+    client.stop(); // 釋放資源
   }
-   
 }
+
  

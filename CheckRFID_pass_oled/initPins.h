@@ -1,11 +1,11 @@
 //-------wifi declare
 #include "Commlib.h"     // 共用函式模組
-#include "esp_mac.h"  // required - exposes esp_mac_type_t values
+//#include "esp_mac.h"  // required - exposes esp_mac_type_t values
 #define WiFiPin 2   //控制板上WIFI指示燈腳位
 #define AccessPin 15 //控制板上連線指示燈腳位
 #define Ledon 1   //LED燈亮燈控制碼
 #define Ledoff 0  //LED燈滅燈控制碼
-#define RelayPin 13 // Relay connected to GPIO D7 (GPIO 13 on ESP32)
+#define RelayPin 39 // Relay connected to GPIO D7 (GPIO 13 on ESP32)
 
 #define initDelay   6000    //初始化延遲時間
 #define loopdelay 10000   //loop 延遲時間
@@ -88,6 +88,8 @@ void initWiFi()   //網路連線，連上熱點
     delay(500) ;  //停500 ms
      wifiMulti.run();   //多網路熱點設定連線
   }
+    delay(1500) ; //wait for wifi module activated
+    MacData = GetMacAddress();  // 取得網路卡MAC地址
     Serial.println("WiFi connected");   //通訊埠印出 WiFi connected
     Serial.print("AP Name: ");   //通訊埠印出 AP Name:
     APname = WiFi.SSID();

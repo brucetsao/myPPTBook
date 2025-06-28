@@ -10,7 +10,7 @@
 #include <MFRC522DriverPinSimple.h> // 引入簡易腳位設定的驅動程式
 #include <MFRC522Debug.h>        // 引入除錯用的輔助函式庫
 
-char cardvalue[100] ;  //列印卡號轉換字串陣列
+char cardvalue[12] ;  //列印卡號轉換字串陣列
 // 更多關於 SPI/I2C 接線資訊可參考：https://github.com/OSSLibraries/Arduino_MFRC522v2#pin-layout
 
 MFRC522DriverPinSimple ss_pin(5); // 建立一個使用 GPIO5 (D5 腳位) 作為 SS（Slave Select）的簡易腳位物件
@@ -22,9 +22,8 @@ MFRC522 mfrc522{driver};           // 建立一個 MFRC522 物件並指定通訊
 // 預先宣告 UUIDString 函式：將 4 個 byte 資料組合成一個 long 型態的數值
 unsigned long UUIDString(int d4,int d3, int d2, int d1);
  String uidStr = "" ;// RFID卡號的String變數
- 
-void PrintCardonOLED(String ss); //顯示卡號在Oled上
 
+void PrintCardonOLED(String ss); //顯示卡號在Oled上
  
 void initRFID() //初始化RFID感測器函式
 {
@@ -56,7 +55,9 @@ boolean checkNewCard()//偵測新卡片讀入
   {
      return false ;
   }
- }
+
+ 
+}
 
 boolean checkReadRFIDSuccess()  //嘗試讀取卡片序列號（UID）是否成功
 {
@@ -77,28 +78,26 @@ boolean checkReadRFIDSuccess()  //嘗試讀取卡片序列號（UID）是否成�
 String readRFIDUUID() //建立讀取RFID UUID卡號函式
 {
   String tmp = "" ;  //宣告回傳變數
-  unsigned long ttmp ;
   // 顯示卡片的 UID
   //Serial.print("Card UID: ");
   //MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
   //Serial.println();
 
   // 使用自訂函式 UUIDString()，輸出RFID Tag 常見的10位數字以內的卡值
-  ttmp = UUIDString(
+  tmp = UUIDString(
           (int)mfrc522.uid.uidByte[3],
           (int)mfrc522.uid.uidByte[2],
           (int)mfrc522.uid.uidByte[1],
           (int)mfrc522.uid.uidByte[0]
         );
-        tmp = String(ttmp) ;
-        Serial.print("tmp is :(");
-        Serial.print(tmp);
-        Serial.print(")\n");
-        
+//        Serial.print("tmp is :(");
+//        Serial.print(tmp);
+//        Serial.print(")\n");
+//        
       int len = tmp.length() ;
-        Serial.print("Len is :(");
-        Serial.print(len);
-        Serial.print(")\n");
+//        Serial.print("Len is :(");
+//        Serial.print(len);
+//        Serial.print(")\n");
     if (len <10)
     {
         return genstr('0',10-len)+tmp ;
@@ -124,14 +123,8 @@ String readRFIDUUIDString() //建立讀取RFID UUID卡號函式(Byte內容字串
 }
 
 
-
 void PrintCardonOLED(String ss) //顯示卡號在Oled上
 {
-    sprintf(cardvalue,"%s",ss.c_str())  ;  //轉換string字串到char array
-    //CopyString2Char(ss,&cardvalue[0]) ; //轉換string字串到char array
-      _TPrint(1,32,cardvalue);  //(50, 15) 顯示卡號。
-      Serial.print("Card on OLED:(") ;
-      Serial.print(cardvalue) ;
-      Serial.print(")\n") ;
-      
+    sprintf(cardvalue,"%s",ss)  ;  //轉換string字串到char array
+      _TPrint(1,35,cardvalue);  //(50, 15) 顯示卡號。
 }

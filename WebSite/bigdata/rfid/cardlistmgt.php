@@ -106,7 +106,7 @@ mysqli_close($link);
                 <td>Data Time(系統時間)</td>
                 <td>Start Data Time(起始時間)</td>
                 <td>End Data Time(結束時間)</td>
-                <td>Management(管理)<a href='rfidformadd.php'>新增</a></td>
+                <td>Management(管理)</td>
             </tr>
 
             <?php 
