@@ -16,13 +16,23 @@ https://lib.ebookservice.tw/ks/#book/54c10854-efba-475f-ad43-656be390b5a6
 
 
 智慧家居之氣氛燈泡手機軟體開發篇
-https://lib.ebookservice.tw/ks/#book/f28be501-fb33-4a81-bab9-bfa2a030ecf4
+新北 https://lib.ebookservice.tw/nt/#book/f28be501-fb33-4a81-bab9-bfa2a030ecf4
+
+高雄 https://lib.ebookservice.tw/ks/#book/f28be501-fb33-4a81-bab9-bfa2a030ecf4
+
+
 
 智慧家居之氣氛燈泡_韌體篇
-https://lib.ebookservice.tw/ks/#book/8420658c-1289-4e49-9b8b-85a7acc629cf
+新北 https://lib.ebookservice.tw/nt/#book/8420658c-1289-4e49-9b8b-85a7acc629cf
+
+高雄 https://lib.ebookservice.tw/ks/#book/8420658c-1289-4e49-9b8b-85a7acc629cf
+
+
 
 智慧家居之氣氛燈泡_開發工具安裝與設定
-https://lib.ebookservice.tw/ks/#book/c73a561b-906b-42e2-8e2f-0a4605094c31
+新北 https://lib.ebookservice.tw/nt/#book/c73a561b-906b-42e2-8e2f-0a4605094c31
+
+高雄 https://lib.ebookservice.tw/ks/#book/c73a561b-906b-42e2-8e2f-0a4605094c31
 
 
 Kicad 設計教學系列
@@ -99,18 +109,38 @@ https://lib.ebookservice.tw/ks/#book/b846468c-f6b6-4194-ba38-4eefa21ed765
 
 
 溫溼度感測器之資料代理人設計
-https://lib.ebookservice.tw/ks/#book/5d77e614-bf1a-4563-b57a-4e13fd244860
+新北 https://lib.ebookservice.tw/nt/#book/5d77e614-bf1a-4563-b57a-4e13fd244860
+
+高雄 https://lib.ebookservice.tw/ks/#book/5d77e614-bf1a-4563-b57a-4e13fd244860
+
 
 
 擴充欄位之溫溼度感測器之資料代理人設計
-https://lib.ebookservice.tw/ks/#book/2b8f72ad-210c-424d-a5a7-d7b363157914
+新北 https://lib.ebookservice.tw/nt/#book/2b8f72ad-210c-424d-a5a7-d7b363157914
+
+高雄 https://lib.ebookservice.tw/ks/#book/2b8f72ad-210c-424d-a5a7-d7b363157914
 
 
 溫溼度感測器之雲端版資料代理人設計
-https://lib.ebookservice.tw/ks/#book/6478bdef-7aef-4a9f-a064-2f58b5fcf2cf
+新北 https://lib.ebookservice.tw/nt/#book/6478bdef-7aef-4a9f-a064-2f58b5fcf2cf
+
+高雄 https://lib.ebookservice.tw/ks/#book/6478bdef-7aef-4a9f-a064-2f58b5fcf2cf
+
+
+
 
 擴充欄位之溫溼度感測器之雲端版資料代理人設計
-https://lib.ebookservice.tw/ks/#book/a084d843-cd15-4cef-b059-c5e888e3bb67
+新北 https://lib.ebookservice.tw/nt/#book/a084d843-cd15-4cef-b059-c5e888e3bb67
+
+高雄 https://lib.ebookservice.tw/ks/#book/a084d843-cd15-4cef-b059-c5e888e3bb67
+
+
+溫溼度感測器之資料收集端代理人設計
+新北 https://lib.ebookservice.tw/nt/#book/90d8505f-f41d-48e3-aad3-5241dc949567
+
+高雄 https://lib.ebookservice.tw/ks/#book/90d8505f-f41d-48e3-aad3-5241dc949567
+
+
 =====================================================
 
 
